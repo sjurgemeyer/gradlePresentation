@@ -11,3 +11,17 @@ dependencies {
     groovy 'org.codehaus.groovy:groovy-all:2.0.5'
     testCompile "org.spockframework:spock-core:0.7-groovy-2.0" 
 }
+
+
+task useGroovy << {
+    println "Gradle can use all of Groovy's features!"
+    ['this', 'that', 'everything'].each {
+        println "I can do $it"
+    }
+    helperMethod()
+}
+
+def helperMethod() {
+   println "I can call methods!" 
+}
+
