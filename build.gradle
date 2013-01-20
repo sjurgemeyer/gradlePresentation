@@ -25,3 +25,20 @@ def helperMethod() {
    println "I can call methods!" 
 }
 
+task firstAndLast {
+    doLast {
+        println "This ends up happening in the middle"
+    }
+    doFirst {
+        println "This ends up happening second"
+    }
+}
+firstAndLast.doFirst {
+    println "Frist!"
+}
+firstAndLast.doLast {
+    println "second to last"
+}
+firstAndLast << {
+    println "Last :("
+}
