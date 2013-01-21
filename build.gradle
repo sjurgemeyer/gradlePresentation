@@ -20,5 +20,5 @@ war {
     classpath project('service').jar.archivePath
 }
 
-war.dependsOn project('domain').jar
+tasks['war'].dependsOn project('domain').jar
 war.dependsOn project('service').jar
