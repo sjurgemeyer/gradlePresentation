@@ -42,3 +42,7 @@ firstAndLast.doLast {
 firstAndLast << {
     println "Last :("
 }
+//This task is defined by the groovy plugin
+compileGroovy << {
+    println "I just compiled Groovy!"
+}
