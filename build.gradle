@@ -1,48 +1,24 @@
 //Automatically includes the java plugin
-apply plugin: 'groovy'
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    //Alternative syntax
-    //groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.0.5'
-    groovy 'org.codehaus.groovy:groovy-all:2.0.5'
-    testCompile "org.spockframework:spock-core:0.7-groovy-2.0" 
-}
-
-
-task useGroovy << {
-    println "Gradle can use all of Groovy's features!"
-    ['this', 'that', 'everything'].each {
-        println "I can do $it"
-    }
-    helperMethod()
-}
-
-def helperMethod() {
-   println "I can call methods!" 
-}
-
-task firstAndLast {
-    doLast {
-        println "This ends up happening in the middle"
-    }
-    doFirst {
-        println "This ends up happening second"
+apply plugin: 'war'
+subprojects { 
+    apply plugin: 'groovy' 
+    dependencies {
+        //Alternative syntax
+        //groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.0.5'
+        groovy 'org.codehaus.groovy:groovy-all:2.0.5'
+        testCompile "org.spockframework:spock-core:0.7-groovy-2.0" 
     }
 }
-firstAndLast.doFirst {
-    println "Frist!"
+allprojects {
+    repositories {
+        mavenCentral()
+    }
 }
-firstAndLast.doLast {
-    println "second to last"
+
+war {
+    classpath project('domain').jar.archivePath
+    classpath project('service').jar.archivePath
 }
-firstAndLast << {
-    println "Last :("
-}
-//This task is defined by the groovy plugin
-compileGroovy << {
-    println "I just compiled Groovy!"
-}
+
+war.dependsOn project('domain').jar
+war.dependsOn project('service').jar
