@@ -1,0 +1,19 @@
+task createIndex {
+    ext.destFile = new File(buildDir, 'index.htm')
+    //html directory at the root of the project    
+    ext.inputDir = fileTree('html'){
+        include '*.htm'
+    } 
+    inputs.files inputDir
+    outputs.file destFile
+
+    doLast {
+        mkdir(buildDir)
+        if (destFile.exists()) destFile.delete()
+        destFile.withWriter { writer ->
+            inputDir.files.each {
+                writer.writeLine(it.name)
+            }
+        }
+    }
+}
