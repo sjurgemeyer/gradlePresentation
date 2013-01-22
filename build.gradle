@@ -8,17 +8,37 @@ subprojects {
         groovy 'org.codehaus.groovy:groovy-all:2.0.5'
         testCompile "org.spockframework:spock-core:0.7-groovy-2.0" 
     }
+    task printProjectName << {
+        println project.name
+    }
 }
 allprojects {
     repositories {
         mavenCentral()
     }
+    ext.clientVersion=1.0
+}
+project(':web').ext.clientVersion=2.0
+project(':web') {
+    task printTaskNames(dependsOn:':service:printProjectName') << {
+       tasks.each {
+           println it.name
+       }
+    }
 }
 
+//Configure war task
 war {
     classpath project('domain').jar.archivePath
     classpath project('service').jar.archivePath
 }
 
+task printClientVersions << {
+    allprojects.each {
+        println "$it.name $it.clientVersion"
+    }
+}
+
 tasks['war'].dependsOn project('domain').jar
 war.dependsOn project('service').jar
+
