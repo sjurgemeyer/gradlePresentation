@@ -1,0 +1,20 @@
+{
+  "name": "Gradle for the Uninitiated",
+  "description": "Presentation",
+  "author": "Shaun Jurgemeyer",
+  "templates" : {
+      "special" : "simple.tpl",
+      "default" : "simple.tpl"
+  },
+  "pause_msg": "Paused !!!",
+  "markdown" : "maruku",
+  "maruku" : {
+      "use_tex" : false, /* required if you want to use LaTeX */
+      "png_dir" : "images", /* optional */
+      "html_png_url" : "/file/images/" /* optional */
+  },
+  "sections": [
+    {"section":"using"},
+    {"section":"coding"}
+  ]
+}
