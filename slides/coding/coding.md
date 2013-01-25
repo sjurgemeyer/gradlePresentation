@@ -86,6 +86,7 @@ http://gradle.org/docs/current/javadoc/org/gradle/api/Task.html
 !SLIDE 
 # Extra properties
 You can add properties to the project or a task using 'ext'
+
     proj(':web').ext.clientVersion=2.0
     taskName.ext.targetDir='customDir'
 
