@@ -1,3 +1,0 @@
-include 'domain'
-include 'service'
-include 'web'

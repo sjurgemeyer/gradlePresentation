@@ -1,0 +1,115 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        //Make grails plugin available
+        maven { url 'http://repo.grails.org/grails/repo' }
+    }
+
+    dependencies {
+        classpath "org.grails:grails-gradle-plugin:2.0.0-SNAPSHOT"
+                    //"org.grails:grails-bootstrap:2.1.2"
+    }
+}
+subprojects { 
+    //Automatically includes the java plugin
+    apply plugin: 'groovy' 
+    dependencies {
+        groovy 'org.codehaus.groovy:groovy-all:2.0.5'
+        //Alternative syntax
+        //groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.0.5'
+        testCompile "org.spockframework:spock-core:0.7-groovy-2.0" 
+    }
+    task printProjectName << {
+        println project.name
+    }
+}
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+    ext.clientVersion=1.0
+}
+//Set a different property value for a specific project
+project(':web').ext.clientVersion=2.0
+
+//Add a custom task to a specific project
+project(':web') {
+    task printTaskNames(dependsOn:':service:printProjectName') << {
+       tasks.each {
+           println it.name
+       }
+    }
+}
+
+task printClientVersions << {
+    allprojects.each {
+        println "$it.name $it.clientVersion"
+    }
+}
+
+//TODO dependsON 
+//tasks['war'].dependsOn project('domain').jar
+//war.dependsOn project('service').jar
+
+project(':domain') {
+    grailsVersion = '2.2.1'
+    apply plugin: "grails"
+
+    grails {
+        grailsVersion = '2.2.1'
+    }   
+    repositories {
+        maven { 
+            url 'http://repo.grails.org/grails/repo'
+        }
+    }
+}
+
+
+task zipEverything(type: Zip) {
+    from {
+        project('service').jar.archivePath
+    }
+    archiveName='all.zip'
+    destinationDir=project.buildDir
+}
+println '*'*30
+println project('domain').buildDir
+println project('domain').ext
+println '*'*30
+
+zipEverything.dependsOn(':domain:grails-war')
+task highLevel(dependsOn:'domain:updateVersion') << {
+   println "Domain version is ${project(':domain').ext.version}" 
+}
+//Example tasks
+task projectInfo << {
+    println "Project class: ${project.class}"
+    println "Project name: ${project.name}"
+    println "Build dir: ${project.buildDir}"
+}
+
+task taskInfo << {
+    project.tasks.each {
+        println '*'*30
+        println """Name: ${it.name}
+Class: ${it.class}"""
+        println '*'*30
+    }
+}
+//Task syntax can be somewhat confusing.  Below are some examples of the syntax around tasks
+//Declare a task
+task taskA
+task taskB(type: Zip)
+
+//'Configure' a task
+taskA{ dependsOn taskB }
+taskA {
+    doFirst {
+        println "Let's do this!"
+    }
+}
+
+//call doLast
+taskA << { println "Done!" }
+
