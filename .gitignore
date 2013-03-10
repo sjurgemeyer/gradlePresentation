@@ -3,4 +3,4 @@ build/
 node_modules/
 .gradle*
 
-target/*
+target/
