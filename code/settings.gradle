@@ -1,3 +1,1 @@
-include 'domain'
-include 'service'
-include 'web'
+include 'domain', 'service', 'web', 'legacyAnt','legacyMaven'

@@ -1,0 +1,21 @@
+buildscript {
+    repositories {
+        //Make grails plugin available
+        maven { url 'http://repo.grails.org/grails/repo' }
+    }
+
+    dependencies {
+        classpath "org.grails:grails-gradle-plugin:2.0.0-SNAPSHOT"
+    }
+}
+apply plugin: "grails"
+
+grails {
+    grailsVersion = '2.2.1'
+}   
+
+repositories {
+    maven { 
+        url 'http://repo.grails.org/grails/repo'
+    }
+}

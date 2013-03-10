@@ -35,197 +35,311 @@
         <div class="reveal">
             <div class="slides">
 
-            <section data-markdown>
-                <script type="text/template">
-                    ## Intro to Gradle
-                    Shaun Jurgemeyer
-                </script>
-            </section>
-            <section data-markdown>
-                <script type="text/template">
-                    ## Basic Syntax
-                    * Task Definition:
+<section data-markdown><script type="text/template"> 
+# Intro to Gradle
+Shaun Jurgemeyer 
 
-                            task myTask << {
-                                println "Doing something"
-                            }
+Principal Consultant  
 
-                    * Gradle scripts are Groovy code
-                </script>
-            </section>
+Object Partners, Inc
 
-            <section data-markdown>
-                <script type="text/template">
-                    ## doFirst and doLast
-                    * << is an alias for doLast
-
-                            task myTask {
-                                doLast {
-                                    println "Doing something"
-                                }
-                            }
+</script></section>
 
 
-                    * doFirst and doLast can be called after the task is defined
-                    <div class="tag">Tag: firstAndLast</div>
-                </script>
-            </section>
+<section data-markdown><script type="text/template"> 
+## What is Gradle? #
+* JVM based build tool
+* Scripted entirely in a Groovy DSL  
+* Conventions similar to Maven
+* Power of Ant
 
-            <section data-markdown>
-                <script type="text/template">
-                ## Task Dependencies
+<http://gradle.org>
 
-                        task foo(dependsOn:bar) { .. }
-                        foo.dependsOn(bar)
-                        foo.dependsOn('bar')
-
-                </script>
-            </section>
-
-            <section data-markdown>
-                <script type="text/template">
-                ## the Project object
-
-                * All non-qualified properties or method calls delegate to Project
-                * Contains convenience methods and allows you to access project configuration properties
-                <div class="tag">Tag: projectObject</div>
-
-                http://gradle.org/docs/current/javadoc/org/gradle/api/Project.html
-
-                </script>
-            </section>
-
-            <section data-markdown>
-                <script type="text/template">
-                ## Gradle file operations
-                        //File Object relative to project dir
-                        file('path') 
-
-                        //FileCollection
-                        files('path', new File('/usr/')) 
-
-                        //FileTree (extends FileCollection)
-                        fileTree('baseDir') {
-                            includes '**/*.groovy', '**/*.properties'
-                            excludes '**/*.class','.git/**/*'
-                        }
+</script></section>
 
 
-                </script>
-            </section>
-
-            <section data-markdown>
-                <script type="text/template">
-                ## the Task object
-                * Accessible by task name or tasks['taskName']
-                * Can be (and is) extended into custom task types
-
-                http://gradle.org/docs/current/javadoc/org/gradle/api/Task.html
+<section data-markdown><script type="text/template"> 
+## Tasks and Dependencies
+* Gradle tasks == Ant targets
+* Tasks can be dependent on other tasks
+* Gradle resolves dependency order (Configuration phase) before executing (Execution phase)
+* Tasks are only executed when not up to date
+</script></section>
 
 
-                </script>
-            </section>
+<section data-markdown><script type="text/template">
+## Command Line
 
-            <section data-markdown>
-                <script type="text/template">
-                ## Task syntax
-                        //Declare a task
-                        task myTask
-                        task myTask(type: Zip)
+        gradle task1 task2
 
-                        //Configure a task
-                        myTask { dependsOn taskB }
+Commands can be abbreviated
 
-                        //call doLast
-                        myTask << { println "Done!" }
+        gradle myReallyLongTaskName
+        gradle mRLTN
 
-                </script>
-            </section>
+</script></section>
 
-            <section data-markdown>
-                <script type="text/template">
-                ## Custom task types
-                        task zip(type: Zip) {
-                            from 'build/output'
-                        }
 
-                        task mydoc(type:Copy) {
-                            from 'src/main/doc'
-                            into 'build/target/doc'
-                        }
-                </script>
-            </section>
+<section data-markdown><script type="text/template">
+## Command Line (cont.)
+        gradle tasks
+        gradle --help
+        -i (--info) 
+        -d (--debug)
+        -m (dry run - see which tasks will be executed)
+        -x (exclude a task)
+</script></section>
 
-            <section data-markdown>
-                <script type="text/template">
-                ## Extra properties
-                You can add properties to the project or a task using 'ext'
 
-                    proj(':web').ext.clientVersion=2.0
-                    taskName.ext.targetDir='customDir'
+<section data-markdown><script type="text/template"> 
+# Example
+* Uses groovy and java plugin
+* Similar conventions to maven
+</script></section>
 
-                Extra properties can be accessed within the project/task as normal properties
-                </script>
-            </section>
 
-            <section data-markdown>
-                <script type="text/template">
-                ## Up-to-date checking    
-                * Specify input and output
-                * Gradle uses md5 sum of input and output to determine if anything has changed
-                <pre>
-                    inputs.file file
-                    inputs.files fileCollection
-                    inputs.dir dir
-                    outputs.file destFile
-                    ...
-                </pre>
-                <div class="tag">Tag: upToDate</div>
-                </script>
-            </section>
+<section data-markdown><script type="text/template">
+## Basic Syntax
+* Task Definition:
 
-            <section data-markdown>
-                <script type="text/template">
-                ## Configuring multi project builds
-                    settings.gradle
-                    include 'projectName'
-                projects can be configured in main gradle file or in individual gradle files
-                </script>
-            </section>
+        task myTask << {
+            println 'Doing something'
+        }
 
-            <section data-markdown>
-                <script type="text/template">
-                ## Using the main build.gradle
-                    subprojects { 
-                        apply plugin: 'groovy' 
-                        dependencies {
-                            groovy 'org.codehaus.groovy:groovy-all:2.0.5'
-                            testCompile "org.spockframework:spock-core:0.7-groovy-2.0" 
-                        }
-                        task printProjectName << {
-                            print project.name
-                        }
-                    }
-                    allprojects {
-                        repositories {
-                            mavenCentral()
-                        }
-                    }
+* Gradle scripts are Groovy code
+</script></section>
 
-                </script>
-            </section>
+
+<section data-markdown> <script type="text/template">
+## doFirst and doLast
+* << is an alias for doLast
+
+            task myTask 
+            myTask.doLast {
+                println 'Doing something'
+            }
+            myTask.doFirst {
+                println 'this must come first!'
+            }
+
+* doFirst and doLast can be called after the task is defined
+</script> </section>
+
+
+<section data-markdown> <script type="text/template">
+## Task Dependencies
+
+        //declare a dpeendency when creating the task
+        task foo(dependsOn:bar) { .. }
+        //add an existing task as a dependency
+        foo.dependsOn(bar)
+        //add a dependency for a task that may not exist yet
+        foo.dependsOn('bar')
+
+</script> </section>
+
+
+<section data-markdown> <script type="text/template">
+        ## the Project object
+
+        * All non-qualified properties or method calls delegate to Project
+        * Contains convenience methods and allows you to access project configuration properties
+
+        <http://gradle.org/docs/current/javadoc/org/gradle/api/Project.html>
+        <aside class="notes">
+            Show 'task' method
+            Talk about file methods
+        </aside>
+</script> </section>
+
+
+<section data-markdown> <script type="text/template">
+## Gradle file operations
+        //File Object relative to project dir
+        file('path') 
+
+        //FileCollection
+        files('path', new File('/usr/')) 
+
+        //FileTree (extends FileCollection)
+        fileTree('baseDir') {
+            includes '**/*.groovy', '**/*.properties'
+            excludes '**/*.class','.git/**/*'
+        }
+</script> </section>
+
+
+<section data-markdown> <script type="text/template">
+## the Task object
+* Accessible by task name or tasks['taskName']
+* Can be (and is) extended into custom task types
+
+<http://gradle.org/docs/current/javadoc/org/gradle/api/Task.html>
+</script> </section>
+
+
+<section data-markdown> <script type="text/template">
+## Task syntax
+        //Declare a task
+        task myTask
+        task myTask(type: Zip)
+
+        //Configure a task
+        myTask { dependsOn taskB }
+
+        //call doLast
+        myTask << { println "Done!" }
+
+</script> </section>
+
+
+<section data-markdown> <script type="text/template">
+## Custom task types
+        task zip(type: Zip) {
+            from 'build/output'
+        }
+
+        task mydoc(type:Copy) {
+            from 'src/main/doc'
+            into 'build/target/doc'
+        }
+</script> </section>
+
+
+<section data-markdown> <script type="text/template">
+## Up-to-date checking    
+* Specify input and output
+* Gradle uses md5 sum of input and output to determine if anything has changed
+
+        inputs.file file
+        inputs.files fileCollection
+        inputs.dir dir
+        outputs.file destFile
+        ...
+</script> </section>
+
+
+<section data-markdown> <script type="text/template">
+## Configuring multi project builds
+        //settings.gradle
+        include 'projectName', 'otherProjectName'
+
+projects can be configured in main gradle file or in individual gradle files
+</script> </section>
+
+
+<section data-markdown><script type="text/template">
+## Multi project builds
+* tasks for specific projects can be referenced with the syntax
+
+        projectName:taskName
+
+* list tasks for all projects with
+
+        gradle tasks --all
+
+
+</script></section>
+
+
+<section data-markdown> <script type="text/template">
+## Cross project dependencies 
+
+        task newTask(dependsOn:':otherProj:taskName') << {
+            ...
+        }
+</script> </section>
+
+
+<section data-markdown> <script type="text/template">
+## Configuring individual projects within main build.gradle
+
+        project(':subProj') {
+            task newTask(dependsOn:':otherProj:taskName') << {
+                ...
+            }
+        }
+</script> </section>
+
+
+<section data-markdown> <script type="text/template">
+## Using the main build.gradle
+        subprojects { 
+            apply plugin: 'groovy' 
+            dependencies {
+                groovy 'org.codehaus.groovy:groovy-all:2.0.5'
+                testCompile "org.spockframework:spock-core:0.7-groovy-2.0" 
+            }
+            task printProjectName << {
+                print project.name
+            }
+        }
+        allprojects {
+            repositories {
+                mavenCentral()
+            }
+        }
+
+</script> </section>
             
 
-            <section data-markdown>
-                <script type="text/template">
-                ## Configuring individual projects within main build.gradle
-                    project(':subProj') {
-                        task newTask(dependsOn:':otherSubProj:taskName') << {
-                            ...
-                        }
-                    }
-                </script>
-            </section>
+<section data-markdown> <script type="text/template">
+## Working with Ant
+        
+        ant.importBuild 'build.xml'
+
+
+</script></section>
+
+<section data-markdown> <script type="text/template">
+## Working with Maven
+
+
+</script></section>
+
+
+<section data-markdown> <script type="text/template">
+## Configuration
+### Locations - Last one wins
+
+        gradle.properties - in project dir
+        gradle.properties - $HOME
+        command line -PmyProperty=abc
+
+
+</script></section>
+
+
+<section data-markdown> <script type="text/template">
+## Gradle Daemon
+* Daemon keeps a 'warm' JVM available and reduces the run time
+
+        gradle --daemon
+        org.gradle.daemon=true
+
+</script></section>
+
+
+<section data-markdown> <script type="text/template">
+## Extra properties
+You can add properties to the project or a task using 'ext'
+
+        proj(':web').ext.clientVersion=2.0
+        taskName.ext.targetDir='customDir'
+
+Extra properties can be accessed within the project/task as normal properties
+</script> </section>
+
+<section data-markdown> <script type="text/template">
+## Task rules
+Tasks can be created dynamically based on rules
+</script> </section>
+
+
+<section data-markdown> <script type="text/template">
+## Task Rules
+
+</script> </section>
 
 </div>
 		</div>
