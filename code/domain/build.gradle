@@ -13,9 +13,3 @@ apply plugin: "grails"
 grails {
     grailsVersion = '2.2.1'
 }   
-
-repositories {
-    maven { 
-        url 'http://repo.grails.org/grails/repo'
-    }
-}

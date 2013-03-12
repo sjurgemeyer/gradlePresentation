@@ -5,7 +5,10 @@ dependencies {
     //groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.0.5'
     groovy 'org.codehaus.groovy:groovy-all:2.0.5'
 
-    dependencies {
-        testCompile "org.spockframework:spock-core:0.7-groovy-2.0" 
+    compile 'joda-time:joda-time:2.1'
+
+    testCompile('org.spockframework:spock-core:0.7-groovy-2.0') {
+        //exclude group: 'org.hamcrest', module: 'hamcrest-core'
     }
 }
+//configurations.testCompile.resolutionStrategy.force 'org.hamcrest:hamcrest-core:1.1'

@@ -1,6 +1,12 @@
+import org.joda.time.LocalDate
+import static org.joda.time.DateTimeConstants.*
+
 buildscript {
     repositories {
         mavenCentral()
+    }
+    dependencies {
+        classpath "joda-time:joda-time:2.1" 
     }
 }
 subprojects { 
@@ -13,7 +19,6 @@ allprojects {
     repositories {
         mavenCentral()
     }
-    ext.clientVersion=1.0
 }
 
 //Add a custom task to a specific project
@@ -25,16 +30,11 @@ project(':web') {
     }
 }
 
-task printClientVersions << {
-    allprojects.each {
-        println "$it.name $it.clientVersion"
-    }
-}
-
 //Import all targets from the ant build as gradle tasks
 project(':legacyAnt') {
     ant.importBuild 'build.xml'
 }
+
 
 task zipEverything(type: Zip) {
     from {
@@ -68,6 +68,7 @@ Class: ${it.class}"""
     }
 }
 
+
 //Task syntax can be somewhat confusing.  Below are some examples of the syntax around tasks
 //Declare a task
 task taskA
@@ -88,6 +89,18 @@ taskA {
 //calls doLast which adds a step to the task execution
 taskA << { println "Done!" }
 
+
+
+
+task weekendTask {
+    onlyIf {
+        [SATURDAY, SUNDAY].contains(new LocalDate().dayOfWeek().get())
+    }
+    doLast {
+        println 'This happens on weekends'
+    }
+}
+
 tasks.addRule("Pattern: ping<URL>") { String taskName ->
     if (taskName.startsWith("ping")) {
 
@@ -99,4 +112,17 @@ tasks.addRule("Pattern: ping<URL>") { String taskName ->
     }
 }
 
-task checkInterwebs(dependsOn:['pinggoogle.com','pingfacebook.com'])
+tasks.addRule("Deploy: <ENV>") { String taskName ->
+    if (taskName.startsWith("deploy")) {
+
+        def env = taskName.toLowerCase() - 'deploy'
+        def urlProperty = "${env}.url"
+
+        if (!project.hasProperty(urlProperty)) throw new TaskInstantiationException("Environment not found - $env")
+
+        def url = project."$urlProperty"
+        task "$taskName" << {
+            println "deploying to '$env' at '$url'"
+        }
+    }
+}

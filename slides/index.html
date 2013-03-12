@@ -218,6 +218,36 @@ Commands can be abbreviated
         ...
 </script> </section>
 
+<section data-markdown> <script type="text/template">
+## Skipping tasks
+* If you want to skip a task under certain conditions use the onlyIf block
+
+        task weekendTask {
+            onlyIf {
+                [SATURDAY, SUNDAY].contains(new LocalDate().dayOfWeek().get())
+            }
+            doLast {
+                println 'This happens on weekends'
+            }
+        }
+
+</script> </section>
+
+<section data-markdown> <script type="text/template">
+## Task rules
+Tasks can be created dynamically based on rules
+
+        tasks.addRule("Pattern: ping<URL>") { String taskName ->
+            if (taskName.startsWith("ping")) {
+
+                def url = taskName - 'ping'
+                task "$taskName"(type:Exec) {
+                    commandLine "ping", '-c', '3', url 
+                    description "Ping $url"
+                }
+            }
+        }
+</script> </section>
 
 <section data-markdown> <script type="text/template">
 ## Configuring multi project builds
@@ -283,20 +313,59 @@ projects can be configured in main gradle file or in individual gradle files
 </script> </section>
             
 
+
+<section data-markdown> <script type="text/template">
+## Dependency Management
+
+        dependencies {
+
+            //compile group: 'joda-time', name: 'joda-time', version: '2.1'
+            compile 'joda-time:joda-time:2.1'
+
+            testCompile('org.spockframework:spock-core:0.7-groovy-2.0') {
+                exclude group: 'org.hamcrest', module: 'hamcrest-core'
+            }
+        }
+
+</script></section>
+
+
 <section data-markdown> <script type="text/template">
 ## Working with Ant
         
         ant.importBuild 'build.xml'
 
+</script></section>
+
+
+<section data-markdown> <script type="text/template">
+## Working with Maven
+maven2Gradle plugin
+
 
 </script></section>
 
 <section data-markdown> <script type="text/template">
-## Working with Maven
+## Working with Grails
+
+        buildscript {
+            repositories {
+                //Make grails plugin available
+                maven { url 'http://repo.grails.org/grails/repo' }
+            }
+
+            dependencies {
+                classpath "org.grails:grails-gradle-plugin:2.0.0-SNAPSHOT"
+            }
+        }
+        apply plugin: "grails"
+
+        grails {
+            grailsVersion = '2.2.1'
+        }   
 
 
 </script></section>
-
 
 <section data-markdown> <script type="text/template">
 ## Configuration
@@ -311,6 +380,17 @@ projects can be configured in main gradle file or in individual gradle files
 
 
 <section data-markdown> <script type="text/template">
+## Extra properties
+You can add properties to the project or a task using 'ext'
+
+        proj(':web').ext.clientVersion=2.0
+        taskName.ext.targetDir='customDir'
+
+Extra properties can be accessed within the project/task as normal properties
+</script> </section>
+
+
+<section data-markdown> <script type="text/template">
 ## Gradle Daemon
 * Daemon keeps a 'warm' JVM available and reduces the run time
 
@@ -321,23 +401,16 @@ projects can be configured in main gradle file or in individual gradle files
 
 
 <section data-markdown> <script type="text/template">
-## Extra properties
-You can add properties to the project or a task using 'ext'
+## Resources
+* http://www.gradle.org/docs/current/userguide/userguide.html
+* http://www.gradle.org/docs/current/javadoc/
+* https://github.com/sjurgemeyer/gradlePresentation
 
-        proj(':web').ext.clientVersion=2.0
-        taskName.ext.targetDir='customDir'
-
-Extra properties can be accessed within the project/task as normal properties
-</script> </section>
-
-<section data-markdown> <script type="text/template">
-## Task rules
-Tasks can be created dynamically based on rules
-</script> </section>
+</script></section>
 
 
 <section data-markdown> <script type="text/template">
-## Task Rules
+## 
 
 </script> </section>
 
